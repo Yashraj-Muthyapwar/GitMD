@@ -1,9 +1,27 @@
-# GitMD
-> Drop a GitHub URL. Get a perfectly structured, comprehensive markdown file in seconds. Zero friction, zero sign-ups.
+<div align="center">
 
-![GitMD Homepage](images/homepage.png)
+# $${\huge \color{#b8f040} 🪄GitMD✨}$$
 
-GitMD is a modern, serverless web application that instantly transforms any public GitHub repository into a clean, comprehensive markdown document. By leveraging the GitHub API and advanced LLM processing, it intelligently parses file trees, metadata, and codebases to generate beautiful documentation on the fly.
+**Any GitHub repo, beautiful markdown. Zero friction.**
+
+A modern, serverless web application that instantly transforms any public GitHub repository into a clean, comprehensive markdown document using the GitHub API and advanced LLM processing.
+
+<a href="https://git-md.vercel.app" target="_blank" rel="noopener noreferrer">
+  <img src="images/homepage.png" alt="GitMD Homepage" width="700" />
+</a>
+
+<br />
+
+[![Next.js](https://img.shields.io/badge/Framework-Next.js-000000?logo=next.js&logoColor=white)](https://nextjs.org/)
+[![Vercel](https://img.shields.io/badge/Hosting-Vercel-000000?logo=vercel&logoColor=white)](https://vercel.com/)
+[![Redis](https://img.shields.io/badge/Cache-Upstash%20Redis-DC382D?logo=redis&logoColor=white)](https://upstash.com/)
+[![Gemini AI](https://img.shields.io/badge/AI-Google%20Gemini-4285F4?logo=google&logoColor=white)](https://deepmind.google/technologies/gemini/)
+[![GitHub API](https://img.shields.io/badge/Data-GitHub%20API-181717?logo=github&logoColor=white)](https://docs.github.com/en/rest)
+
+[![Live Demo](https://img.shields.io/badge/Live_Demo-git--md.vercel.app-000000?style=for-the-badge&logo=vercel)](https://git-md.vercel.app)
+
+</div>
+
 
 ## 🚀 Key Features
 
@@ -41,37 +59,26 @@ User Request
                               [ Return Fresh Data ]
 ```
 
-Open [http://git-md.vercel.app](http://git-md.vercel.app)
+## 🔄 Data Flow Breakdown
+* **Client Request:** The user submits a target repository (owner/repo).
 
-## Data Flow Breakdown
-****Client Request**:** The user submits a target repository (owner/repo).
+* **Cache Interception:** The API queries the Redis database using a unique repository key. If a valid cache exists, it is instantly returned.
 
-**Cache Interception:** The API queries the Redis database using a unique repository key. If a valid cache exists, it is instantly returned.
+* **Data Extraction:** On a cache miss, the backend securely communicates with the GitHub API to pull the repository context.
 
-**Data Extraction:** On a cache miss, the backend securely communicates with the GitHub API to pull the repository context.
+* **AI Processing:** The raw data payload is handed off to Gemini AI for contextual markdown generation.
 
-**AI Processing:** The raw data payload is handed off to Gemini AI for contextual markdown generation.
-
-**Persistence:** The newly generated markdown is saved to Redis with a 21600s (6-hour) TTL before being returned to the user. Users can explicitly bypass the cache using the "Refresh" parameter to force a new generation.
-
-## 🛠 Tech Stack
-**Frontend:** Next.js (React), Custom CSS
-
-**Backend:** Next.js Route Handlers (Serverless Functions)
-
-**Database / Cache:** Vercel KV (Upstash Redis)
-
-**External APIs**: GitHub REST API, Google Gemini API
-
-**Deployment:** Vercel
+* **Persistence:** The newly generated markdown is saved to Redis with a 21600s (6-hour) TTL before being returned to the user. Users can explicitly bypass the cache using the "Refresh" parameter to force a new generation.
 
 ## 🔒 Security & Environment
 This repository is private. The application relies on securely stored environment variables injected at build time:
 
-**GITHUB_TOKEN:** Manages elevated rate limits for repository extraction.
+* **GITHUB_TOKEN:** Manages elevated rate limits for repository extraction.
 
-**GEMINI_API_KEY:** Authenticates with the AI provider.
+* **GEMINI_API_KEY:** Authenticates with the AI provider.
 
-**KV_REST_API_URL & KV_REST_API_TOKEN:** Secures the Redis connection for caching.
+* **KV_REST_API_URL & KV_REST_API_TOKEN:** Secures the Redis connection for caching.
 
-Designed and engineered by **Yashraj**.
+<div align="center">
+Built with ❤️ by Yashraj to make repository documentation feel effortless.
+</div>
