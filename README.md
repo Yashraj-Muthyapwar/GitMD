@@ -48,7 +48,7 @@ User Request
     [   Markdown    ]         [  (repo details)  ]
                                       │
                                       ▼
-                              [ Gemini AI Engine ]
+                              [ LLM/AI Engine ]
                               [ (Generate Docs)  ]
                                       │
                                       ▼
