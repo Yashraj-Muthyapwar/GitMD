@@ -48,7 +48,7 @@ User Request
     [   Markdown    ]         [  (repo details)  ]
                                       │
                                       ▼
-                              [ LLM/AI Engine ]
+                              [  LLM Processing  ]
                               [ (Generate Docs)  ]
                                       │
                                       ▼
