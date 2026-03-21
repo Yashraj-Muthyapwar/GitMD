@@ -9,13 +9,14 @@
 <a href="https://gitmd.org">
   <img src="https://img.shields.io/badge/Try%20it%20Live-%E2%86%92-b8f040?style=for-the-badge&labelColor=0d0d0d" alt="Try it live" />
 </a>
-
 <br/>
 <br/>
 
 <a href="https://gitmd.org">
   <img src="images/homepage.png" alt="GitMD — paste a URL, get markdown" width="720" />
 </a>
+
+![GitMD demo](images/demo.gif)
 
 <br/>
 <br/>
