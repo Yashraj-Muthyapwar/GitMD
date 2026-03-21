@@ -16,8 +16,6 @@
   <img src="images/homepage.png" alt="GitMD — paste a URL, get markdown" width="720" />
 </a>
 
-![GitMD demo](images/demo.gif)
-
 <br/>
 <br/>
 
@@ -28,6 +26,18 @@
 <img src="https://img.shields.io/badge/GitHub_API-181717?style=flat-square&logo=github&logoColor=white" />
 
 </div>
+<br>
+
+<details>
+  <summary><strong>📽️ CLICK FOR DEMOs</strong></summary>
+
+  ## DEMO 1:
+  ![GitMD demo](images/demo.gif)
+
+  ## DEMO 2:
+  ![GitMD demo](images/demo2.gif)
+</details>
+
 
 ## What is this?
 
