@@ -28,15 +28,8 @@
 </div>
 <br>
 
-<details>
-  <summary><strong>📽️ CLICK FOR DEMOs</strong></summary>
-
-  ## DEMO 1:
-  ![GitMD demo](images/demo.gif)
-
-  ## DEMO 2:
+  ## DEMO:
   ![GitMD demo](images/demo2.gif)
-</details>
 
 
 ## What is this?
