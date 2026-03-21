@@ -1,84 +1,95 @@
 <div align="center">
+  
+# GitMD
 
-# $${\huge \color{#b8f040} 🪄GitMD✨}$$
+**Paste a GitHub URL. Get clean, structured markdown in seconds.**
 
-**Any GitHub repo, beautiful markdown. Zero friction.**
+No sign-ups. No configuration. Just works.
 
-A modern, serverless web application that instantly transforms any public GitHub repository into a clean, comprehensive markdown document using the GitHub API and advanced LLM processing.
+[![Next.js](https://img.shields.io/badge/Next.js_16-000000?style=flat-square&logo=next.js&logoColor=white)](https://nextjs.org/)
+[![Gemini AI](https://img.shields.io/badge/Gemini_AI-4285F4?style=flat-square&logo=google&logoColor=white)](https://deepmind.google/technologies/gemini/)
+[![Upstash Redis](https://img.shields.io/badge/Upstash_Redis-DC382D?style=flat-square&logo=redis&logoColor=white)](https://upstash.com/)
+[![Vercel](https://img.shields.io/badge/Vercel-000000?style=flat-square&logo=vercel&logoColor=white)](https://vercel.com/)
+[![GitHub API](https://img.shields.io/badge/GitHub_API-181717?style=flat-square&logo=github&logoColor=white)](https://docs.github.com/en/rest)
 
-<a href="https://git-md.vercel.app" target="_blank" rel="noopener noreferrer">
+
+<a href="https://gitmd.org" target="_blank" rel="noopener noreferrer">
   <img src="images/homepage.png" alt="GitMD Homepage" width="700" />
 </a>
 
-<br />
-
-[![Next.js](https://img.shields.io/badge/Framework-Next.js-000000?logo=next.js&logoColor=white)](https://nextjs.org/)
-[![Vercel](https://img.shields.io/badge/Hosting-Vercel-000000?logo=vercel&logoColor=white)](https://vercel.com/)
-[![Redis](https://img.shields.io/badge/Cache-Upstash%20Redis-DC382D?logo=redis&logoColor=white)](https://upstash.com/)
-[![Gemini AI](https://img.shields.io/badge/AI-Google%20Gemini-4285F4?logo=google&logoColor=white)](https://deepmind.google/technologies/gemini/)
-[![GitHub API](https://img.shields.io/badge/Data-GitHub%20API-181717?logo=github&logoColor=white)](https://docs.github.com/en/rest)
-
-[![Live Demo](https://img.shields.io/badge/Live_Demo-git--md.vercel.app-000000?style=for-the-badge&logo=vercel)](https://git-md.vercel.app)
+[![Try it live](https://img.shields.io/badge/Try_it_live-gitmd.org-b8f040?style=for-the-badge)](https://gitmd.org)
 
 </div>
 
 
-## 🚀 Key Features
 
-* **Smart Extraction:** Programmatically fetches repository metadata, READMEs, and file structures directly via the GitHub API.
-* **AI-Powered Generation:** Utilizes Gemini AI to synthesize raw repository data into well-structured, easy-to-read markdown.
-* **High-Performance Caching:** Implements a robust Cache-Aside architecture using Vercel KV (Upstash Redis) to deliver single-digit millisecond response times for previously generated repositories.
-* **Rate-Limit Protection:** Safely manages GitHub API constraints by persisting data across serverless cold starts with a strict 6-hour Time-To-Live (TTL) eviction policy.
-* **Premium UI/UX:** Built with Next.js, featuring a dark-mode optimized, responsive interface with typography-driven design and tactile micro-interactions.
+## What is this?
 
-## 🏗 System Architecture
+Most of the time when you land on a GitHub repo you've never seen, the README either doesn't exist or was written by someone who already knew the codebase and forgot to explain the obvious parts. So you spend 20 minutes just orienting yourself before you can do anything useful.
 
-GitMD is built on a serverless, edge-ready architecture designed for speed and reliability. Below is the high-level data flow illustrating the Cache-Aside pattern:
+GitMD is a tool I built to fix that. You paste a GitHub URL, it reads the repo's file structure and picks the files that actually reveal how the project is put together, then writes a markdown doc that covers the architecture, the key dependencies, where to start reading, and how to contribute. Cold generation takes 10-15 seconds. If someone ran the same repo earlier today, it's instant.
 
-```text
-User Request
- └──> [ Next.js Frontend ] 
-       └──> POST /api/generate 
-             └──> [ Vercel KV (Redis) Cache Check ]
-                         │
-                   Hit?  │  Miss? (or 'Force Refresh')
-            ┌────────────┴────────────┐
-            ▼                         ▼
-    [ Return Cached ]         [ Fetch GitHub API ]
-    [   Markdown    ]         [  (repo details)  ]
-                                      │
-                                      ▼
-                              [  LLM Processing  ]
-                              [ (Generate Docs)  ]
-                                      │
-                                      ▼
-                              [ Save to Vercel KV ]
-                              [   (6-hour TTL)    ]
-                                      │
-                                      ▼
-                              [ Return Fresh Data ]
+## How it works
+
+```
+Paste a GitHub URL
+        │
+        ▼
+  Redis cache check
+        │
+   ┌────┴──────────────────────┐
+   │ HIT                       │ MISS
+   ▼                           ▼
+Instant response          GitHub API fetch
+                          (tree, README, metadata)
+                                │
+                                ▼
+                       Stage 1 — Smart Selector
+                       Identifies the 8-12 files
+                       that best explain the codebase
+                                │
+                                ▼
+                       Stage 2 — Doc Writer
+                       Writes the markdown doc
+                       from the selected context
+                                │
+                                ▼
+                       Cache for 24 hours
+                       Stream to client
 ```
 
-## 🔄 Data Flow Breakdown
-* **Client Request:** The user submits a target repository (owner/repo).
+One big prompt over an entire repo produces shallow, generic output. Stage 1 runs a triage pass first — it looks at the file tree, detects the repo type (monorepo, CLI, ML library, platform running on Docker services, and so on), then picks the files worth feeding to Stage 2. The second stage writes from that focused set instead of from everything at once. On small repos the difference is subtle. On large ones it's obvious.
 
-* **Cache Interception:** The API queries the Redis database using a unique repository key. If a valid cache exists, it is instantly returned.
+## What you get
 
-* **Data Extraction:** On a cache miss, the backend securely communicates with the GitHub API to pull the repository context.
+The output is a single markdown file structured for four different readers at once: an engineer who needs architecture depth fast, a newcomer who needs plain-English orientation, a learner who wants to understand what patterns the codebase teaches, and an AI agent that needs structured metadata.
 
-* **AI Processing:** The raw data payload is handed off to Gemini AI for contextual markdown generation.
+In practice that means:
 
-* **Persistence:** The newly generated markdown is saved to Redis with a 21600s (6-hour) TTL before being returned to the user. Users can explicitly bypass the cache using the "Refresh" parameter to force a new generation.
+- A one-liner on what the project does and who it's for
+- The actual problem it was solving before it existed, not marketing copy
+- The data flow traced through real filenames from the repo, not generic diagrams
+- The two or three dependencies the whole thing falls apart without, and why
+- Every top-level directory explained — what lives there, not just the folder name
+- Separate file picks for engineers vs learners, pointing at actual source files
+- Getting started instructions from the real config files
+- YAML metadata block for AI tooling and automation
 
-## 🔒 Security & Environment
-This repository is private. The application relies on securely stored environment variables injected at build time:
+## Tested against hard repos
 
-* **GITHUB_TOKEN:** Manages elevated rate limits for repository extraction.
+| Repo | What makes it hard | Result |
+|---|---|---|
+| `vercel/next.js` | 100k+ files, Rust + JS, large monorepo | Rust engine files surfaced alongside the JS framework source |
+| `supabase/supabase` | Backend is external Docker services, not TypeScript source | `docker-compose.yml` used as the architecture document |
+| `huggingface/transformers` | Docs outnumber source files by a wide margin | Engineers pointed at `.py` source, not `.md` docs about source |
+| `langchain-ai/langchain` | Nested monorepo, all packages under one `libs/` parent | Coverage spread across `libs/core`, `libs/langchain`, `libs/community` |
+| `fastapi/fastapi` | `docs_src/` tutorial files look like real source to a naive selector | Tutorial directories excluded from engineer entry points |
+| `cli/cli` | Pure Go CLI, no frontend layer | Entry point, command router, and API client all picked correctly |
 
-* **GEMINI_API_KEY:** Authenticates with the AI provider.
+## Feedback
 
-* **KV_REST_API_URL & KV_REST_API_TOKEN:** Secures the Redis connection for caching.
+If a specific repo produces bad output, [open an issue](https://github.com/Yashraj-Muthyapwar/GitMD/issues/new) and include the URL. That's genuinely the most useful thing you can send.
 
 <div align="center">
-Built with ❤️ by Yashraj to make repository documentation feel effortless.
+Built by <a href="https://github.com/Yashraj-Muthyapwar">Yashraj</a> &nbsp;·&nbsp; <a href="https://gitmd.org">gitmd.org</a>
 </div>
